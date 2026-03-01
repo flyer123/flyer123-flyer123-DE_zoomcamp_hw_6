@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  spark-master:
+    image: spark:3.5.1
+    container_name: spark-master
+    command: >
+      /opt/spark/bin/spark-class
+      org.apache.spark.deploy.master.Master
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    networks:
+      - spark-net
+
+  spark-worker:
+    image: spark:3.5.1
+    container_name: spark-worker
+    command: >
+      /opt/spark/bin/spark-class
+      org.apache.spark.deploy.worker.Worker
+      spark://spark-master:7077
+    depends_on:
+      - spark-master
+    networks:
+      - spark-net
+
+  pyspark-notebook:
+    image: jupyter/pyspark-notebook:python-3.10
+    container_name: pyspark-notebook
+    ports:
+      - "8888:8888"
+    networks:
+      - spark-net
+    depends_on:
+      - spark-master
+
+networks:
+  spark-net:
+    driver: bridge
