@@ -2,7 +2,9 @@ version: "3.8"
 
 services:
   spark-master:
-    image: spark:3.5.1
+    volumes:
+      - ./data:/data
+    image: apache/spark:3.4.0
     container_name: spark-master
     command: >
       /opt/spark/bin/spark-class
@@ -14,7 +16,9 @@ services:
       - spark-net
 
   spark-worker:
-    image: spark:3.5.1
+    volumes:
+      - ./data:/data
+    image: apache/spark:3.4.0
     container_name: spark-worker
     command: >
       /opt/spark/bin/spark-class
@@ -26,6 +30,8 @@ services:
       - spark-net
 
   pyspark-notebook:
+    volumes:
+      - ./data:/data
     image: jupyter/pyspark-notebook:python-3.10
     container_name: pyspark-notebook
     ports:
